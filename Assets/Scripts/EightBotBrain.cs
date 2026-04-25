@@ -64,6 +64,7 @@ namespace Assets.Scripts
             if (useBookEdgeFilter && !foundByBook)
             {
                 // If rule expansion and book transitions disagree, keep bot playable by falling back.
+                Debug.LogWarning("Bot falling back to rule-based move: Book transition mismatch.");
                 foreach (var move in legalMoves)
                 {
                     var child = EightGameRules.ApplyMove(state, move);
@@ -147,36 +148,7 @@ namespace Assets.Scripts
         {
             EnsureBookLoaded();
             if (_book == null) return 0;
-            if (!_book.TryGetClass(state, out var stateClass) || string.IsNullOrWhiteSpace(stateClass)) return 0;
-
-            var tags = stateClass.Split(' ');
-            var classSide = string.Empty;
-            var hasWin = false;
-            var hasWinWin = false;
-            var hasLose = false;
-            var hasLoseLose = false;
-
-            foreach (var raw in tags)
-            {
-                if (string.IsNullOrWhiteSpace(raw)) continue;
-                var tag = raw.Trim().ToLowerInvariant();
-                if (tag == "white" || tag == "black") classSide = tag;
-                else if (tag == "win") hasWin = true;
-                else if (tag == "winwin") hasWinWin = true;
-                else if (tag == "lose") hasLose = true;
-                else if (tag == "loselose") hasLoseLose = true;
-            }
-
-            var classSideRank = 0;
-            if (hasWinWin) classSideRank = 2;
-            else if (hasWin) classSideRank = 1;
-            else if (hasLoseLose) classSideRank = -2;
-            else if (hasLose) classSideRank = -1;
-
-            if (string.IsNullOrEmpty(classSide) || classSideRank == 0) return 0;
-
-            var sideToMoveToken = state.WhiteTurn ? "white" : "black";
-            return classSide == sideToMoveToken ? classSideRank : -classSideRank;
+            return _book.TryGetSideToMoveRank(state, out var rank) ? rank : 0;
         }
 
         private static StrategyOutcome ToStrategyOutcome(int rank)
