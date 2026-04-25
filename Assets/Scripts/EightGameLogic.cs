@@ -37,25 +37,6 @@ namespace Assets.Scripts
             }
         }
 
-        public int OutcomeForSideToMove
-        {
-            get
-            {
-                var sideToMoveDead = WhiteTurn
-                    ? WhiteA == 0 && WhiteB == 0
-                    : BlackA == 0 && BlackB == 0;
-
-                var opponentDead = WhiteTurn
-                    ? BlackA == 0 && BlackB == 0
-                    : WhiteA == 0 && WhiteB == 0;
-
-                if (sideToMoveDead && opponentDead) return 0;
-                if (sideToMoveDead) return -1;
-                if (opponentDead) return 1;
-                return 0;
-            }
-        }
-
         public bool Equals(EightGameState other)
         {
             return WhiteA == other.WhiteA
@@ -493,27 +474,6 @@ namespace Assets.Scripts
             public string label;
             public string source;
             public string target;
-        }
-    }
-
-    public enum StrategyOutcome
-    {
-        Lose = -1,
-        Draw = 0,
-        Win = 1
-    }
-
-    public readonly struct StrategyEvaluation
-    {
-        public readonly StrategyOutcome Outcome;
-        public readonly int Plies;
-        public readonly EightMove? BestMove;
-
-        public StrategyEvaluation(StrategyOutcome outcome, int plies, EightMove? bestMove)
-        {
-            Outcome = outcome;
-            Plies = plies;
-            BestMove = bestMove;
         }
     }
 }

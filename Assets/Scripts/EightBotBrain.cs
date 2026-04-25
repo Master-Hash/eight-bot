@@ -11,11 +11,6 @@ namespace Assets.Scripts
 
         public EightGameState CurrentState => GameConfig.CurrentState;
 
-        public void SetState(EightGameState state)
-        {
-            GameConfig.CurrentState = state;
-        }
-
         public void ApplyMove(EightMove move)
         {
             GameConfig.CurrentState = EightGameRules.ApplyMove(GameConfig.CurrentState, move);
@@ -80,20 +75,6 @@ namespace Assets.Scripts
             return bestMove;
         }
 
-        public StrategyEvaluation EvaluateCurrentState()
-        {
-            var state = GameConfig.CurrentState;
-            var rank = GetOutcomeRankForPerspective(state, state.WhiteTurn);
-            var outcome = ToStrategyOutcome(rank);
-            var plies = Mathf.Abs(rank) >= 2 ? 2 : (rank == 0 ? 0 : 1);
-            return new StrategyEvaluation(outcome, plies, GetOptimalMove());
-        }
-
-        public IReadOnlyList<EightMove> GetRuleBasedMoves()
-        {
-            return EightGameRules.GetLegalMoves(GameConfig.CurrentState);
-        }
-
         public IReadOnlyList<EightGameState> GetAllPossibleNextStatesFromData8()
         {
             EnsureBookLoaded();
@@ -103,12 +84,6 @@ namespace Assets.Scripts
             }
 
             return _book.GetPossibleNextStates(GameConfig.CurrentState);
-        }
-
-        public IReadOnlyCollection<EightGameState> GetAllStatesFromData8()
-        {
-            EnsureBookLoaded();
-            return _book?.States ?? new List<EightGameState>();
         }
 
         public bool TryGetCurrentStateClassFromData8(out string stateClass)
@@ -149,13 +124,6 @@ namespace Assets.Scripts
             EnsureBookLoaded();
             if (_book == null) return 0;
             return _book.TryGetSideToMoveRank(state, out var rank) ? rank : 0;
-        }
-
-        private static StrategyOutcome ToStrategyOutcome(int rank)
-        {
-            if (rank > 0) return StrategyOutcome.Win;
-            if (rank < 0) return StrategyOutcome.Lose;
-            return StrategyOutcome.Draw;
         }
     }
 }

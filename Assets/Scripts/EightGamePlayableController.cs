@@ -124,19 +124,6 @@ namespace Assets.Scripts
                 }
 
                 RefreshHandSprites();
-                if (_isBotAnimating)
-                {
-                    ApplyTurnBackgroundColor(_botAnimatingTurnWasWhite);
-                }
-                else if (_isPlayerReturnAnimating)
-                {
-                    ApplyTurnBackgroundColor(_playerReturnAnimatingTurnWasWhite);
-                }
-                else
-                {
-                    ApplyTurnBackgroundColor(state);
-                }
-
                 RefreshRuntimeUi();
                 return;
             }
@@ -146,26 +133,12 @@ namespace Assets.Scripts
             if (_isBotAnimating || _isPlayerReturnAnimating)
             {
                 RefreshHandSprites();
-                if (_isBotAnimating)
-                {
-                    ApplyTurnBackgroundColor(_botAnimatingTurnWasWhite);
-                }
-                else if (_isPlayerReturnAnimating)
-                {
-                    ApplyTurnBackgroundColor(_playerReturnAnimatingTurnWasWhite);
-                }
-                else
-                {
-                    ApplyTurnBackgroundColor(GameConfig.CurrentState);
-                }
-
                 RefreshRuntimeUi();
                 return;
             }
 
             HandleHumanDragInput(state);
             RefreshHandSprites();
-            ApplyTurnBackgroundColor(GameConfig.CurrentState);
 
             if (IsHumanTurn(state))
             {
@@ -536,6 +509,7 @@ namespace Assets.Scripts
             yield return AnimateHandPosition(ownHand, ownHand.position, startPos, botReturnDurationSeconds);
 
             ResetHandPositions();
+            ApplyTurnBackgroundColor(GameConfig.CurrentState);
             _nextBotMoveAt = Time.time + botMoveDelaySeconds;
             _isBotAnimating = false;
         }
@@ -552,6 +526,7 @@ namespace Assets.Scripts
 
             yield return AnimateHandPosition(hand, from, to, botReturnDurationSeconds);
             ResetHandPositions();
+            ApplyTurnBackgroundColor(GameConfig.CurrentState);
             _isPlayerReturnAnimating = false;
             _nextBotMoveAt = Time.time + botMoveDelaySeconds;
         }
