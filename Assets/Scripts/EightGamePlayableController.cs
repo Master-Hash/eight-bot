@@ -222,8 +222,8 @@ namespace Assets.Scripts
 
             string text;
             if (whiteDead && blackDead) text = "Draw!";
-            else if (whiteDead) text = "Blue wins!";
-            else if (blackDead) text = "Red wins!";
+            else if (whiteDead) text = "Red wins!";
+            else if (blackDead) text = "Blue wins!";
             else text = "Game over";
 
             var oldAlignment = GUI.skin.label.alignment;
@@ -258,8 +258,8 @@ namespace Assets.Scripts
             var blackDead = state.BlackA == 0 && state.BlackB == 0;
 
             if (whiteDead && blackDead) return "Game over: Draw";
-            if (whiteDead) return "Game over: White wins";
-            if (blackDead) return "Game over: Black wins";
+            if (whiteDead) return "Game over: Black wins";
+            if (blackDead) return "Game over: White wins";
             return "Game over";
         }
 
