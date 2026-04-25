@@ -48,7 +48,7 @@ namespace Assets.Scripts
                 }
 
                 var score = GetOutcomeRankForPerspective(child, perspectiveIsWhite);
-                if (score > bestScore)
+                if (score > bestScore || (score == bestScore && ShouldPreferTieBreakMove(state, move, bestMove)))
                 {
                     bestScore = score;
                     bestMove = move;
@@ -64,7 +64,7 @@ namespace Assets.Scripts
                 {
                     var child = EightGameRules.ApplyMove(state, move);
                     var score = GetOutcomeRankForPerspective(child, perspectiveIsWhite);
-                    if (score > bestScore)
+                    if (score > bestScore || (score == bestScore && ShouldPreferTieBreakMove(state, move, bestMove)))
                     {
                         bestScore = score;
                         bestMove = move;
@@ -124,6 +124,33 @@ namespace Assets.Scripts
             EnsureBookLoaded();
             if (_book == null) return 0;
             return _book.TryGetSideToMoveRank(state, out var rank) ? rank : 0;
+        }
+
+        private static bool ShouldPreferTieBreakMove(EightGameState state, EightMove candidate, EightMove currentBest)
+        {
+            // If scores are tied, prefer a move that lands exactly on 8 (hand gets removed).
+            var candidateGetsEight = MoveGetsEight(state, candidate);
+            var currentBestGetsEight = MoveGetsEight(state, currentBest);
+            return candidateGetsEight && !currentBestGetsEight;
+        }
+
+        private static bool MoveGetsEight(EightGameState state, EightMove move)
+        {
+            int own;
+            int opponent;
+
+            if (state.WhiteTurn)
+            {
+                own = move.OwnHandIndex == 0 ? state.WhiteA : state.WhiteB;
+                opponent = move.OpponentHandIndex == 0 ? state.BlackA : state.BlackB;
+            }
+            else
+            {
+                own = move.OwnHandIndex == 0 ? state.BlackA : state.BlackB;
+                opponent = move.OpponentHandIndex == 0 ? state.WhiteA : state.WhiteB;
+            }
+
+            return own + opponent == 8;
         }
     }
 }
